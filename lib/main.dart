@@ -211,13 +211,16 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
       localeId: 'id_ID',
       listenFor: const Duration(seconds: 30),
       pauseFor: const Duration(seconds: 3),
-      listenOptions: const SpeechListenOptions(
+            listenOptions: SpeechListenOptions(
         partialResults: true,
         cancelOnError: true,
         listenMode: ListenMode.dictation,
       ),
+         
     );
   }
+
+  
 
   void _bukaSetting() {
     showModalBottomSheet(
