@@ -32,7 +32,7 @@ jobs:
       - name: Build APK
         run: |
           set -o pipefail
-          flutter build apk --release --stacktrace 2>&1 | tee build.log
+          flutter build apk --release 2>&1 | tee build.log
       - name: Ringkas error
         if: failure()
         run: grep -iE "what went wrong|error:|failed|caused by|exception|requires|not found" build.log | tail -40
