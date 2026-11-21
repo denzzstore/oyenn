@@ -51,7 +51,7 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
   final _scroll = ScrollController();
   final _tts = FlutterTts();
   final _speech = SpeechToText();
-  final List<Msg> _msgs = [];
+  final _msgs = <Msg>[];
 
   String _key = '';
   String _base = kDefaultBaseUrl;
@@ -135,12 +135,12 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
     });
     _bawah();
     try {
-      final List> hist = [
-        <String, String>{'role': 'system', 'content': oyenSystemPrompt(_level)},
+      final hist = [
+        {'role': 'system', 'content': oyenSystemPrompt(_level)},
       ];
-      final List<Msg> potong = _msgs.length > 13 ? _msgs.sublist(_msgs.length - 13) : _msgs;
+      final potong = _msgs.length > 13 ? _msgs.sublist(_msgs.length - 13) : _msgs;
       for (final m in potong) {
-        hist.add(<String, String>{'role': m.role, 'content': m.text});
+        hist.add({'role': m.role, 'content': m.text});
       }
       final r = await OyenApi(key: _key, baseUrl: _base, model: _model).reply(hist);
       if (!mounted) return;
@@ -361,7 +361,7 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
   @override
   Widget build(BuildContext context) {
     if (!_siap) {
-      return const Scaffold(
+      return Scaffold(
         body: Center(child: CircularProgressIndicator(color: _oren)),
       );
     }
@@ -375,9 +375,9 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
               left: 14,
               right: 6,
             ),
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [Color(0xFF2A1A0C), _bg],
+                colors: const [Color(0xFF2A1A0C), _bg],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
               ),
