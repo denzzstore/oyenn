@@ -135,12 +135,12 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
     });
     _bawah();
     try {
-      final hist = >[
-        {'role': 'system', 'content': oyenSystemPrompt(_level)},
+      final List> hist = [
+        <String, String>{'role': 'system', 'content': oyenSystemPrompt(_level)},
       ];
-      final potong = _msgs.length > 13 ? _msgs.sublist(_msgs.length - 13) : _msgs;
+      final List<Msg> potong = _msgs.length > 13 ? _msgs.sublist(_msgs.length - 13) : _msgs;
       for (final m in potong) {
-        hist.add({'role': m.role, 'content': m.text});
+        hist.add(<String, String>{'role': m.role, 'content': m.text});
       }
       final r = await OyenApi(key: _key, baseUrl: _base, model: _model).reply(hist);
       if (!mounted) return;
@@ -211,7 +211,7 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
       localeId: 'id_ID',
       listenFor: const Duration(seconds: 30),
       pauseFor: const Duration(seconds: 3),
-      listenOptions: SpeechListenOptions(
+      listenOptions: const SpeechListenOptions(
         partialResults: true,
         cancelOnError: true,
         listenMode: ListenMode.dictation,
