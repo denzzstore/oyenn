@@ -256,6 +256,18 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
 
   Widget _kucing({double size = 46}) {
     final double iconSize = size * 0.55;
+    final Widget fallbackWidget = Center(
+      child: Icon(
+        Icons.pets_rounded,
+        size: iconSize,
+        color: _oren,
+      ),
+    );
+    final Widget avatarImg = Image.asset(
+      'assets/oyen.png',
+      fit: BoxFit.cover,
+      errorBuilder: (ctx, err, stack) => fallbackWidget,
+    );
     return AnimatedBuilder(
       animation: _bob,
       builder: (context, child) {
@@ -272,21 +284,7 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
                 color: const Color(0xFF22222E),
                 border: Border.all(color: _oren.withValues(alpha: 0.7), width: 2),
               ),
-              child: ClipOval(
-                child: Image.asset(
-                  'assets/oyen.png',
-                  fit: BoxFit.cover,
-                  errorBuilder: (ctx, err, stack) {
-                    return Center(
-                      child: Icon(
-                        Icons.pets_rounded,
-                        size: iconSize,
-                        color: _oren,
-                      ),
-                    );
-                  },
-                ),
-              ),
+              child: ClipOval(child: avatarImg),
             ),
           ),
         );
