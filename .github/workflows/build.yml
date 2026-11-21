@@ -19,14 +19,27 @@ jobs:
           cache: true
       - name: Scaffold android + izin
         run: |
+          yes | sdkmanager --licenses > /dev/null 2>&1 || true
           flutter create --platforms=android --project-name oyen --org ai.venice .
           sed -i 's|<application|    <uses-permission android:name="android.permission.INTERNET"/>\n    <uses-permission android:name="android.permission.RECORD_AUDIO"/>\n    <queries>\n        <intent><action android:name="android.speech.RecognitionService"/></intent>\n        <intent><action android:name="android.intent.action.TTS_SERVICE"/></intent>\n    </queries>\n    <application|' android/app/src/main/AndroidManifest.xml
           sed -i 's|android:label="oyen"|android:label="Oyen"|' android/app/src/main/AndroidManifest.xml
+          sed -i 's|compileSdk = flutter.compileSdkVersion|compileSdk = 35|' android/app/build.gradle.kts
+          sed -i 's|minSdk = flutter.minSdkVersion|minSdk = 24|' android/app/build.gradle.kts
+          sed -i 's|targetSdk = flutter.targetSdkVersion|targetSdk = 35|' android/app/build.gradle.kts
+          echo "kotlin.jvm.target.validation.mode=warning" >> android/gradle.properties
+          echo "org.gradle.jvmargs=-Xmx4g" >> android/gradle.properties
       - run: flutter pub get
-      - run: flutter doctor -v
       - name: Build APK
-        run: flutter build apk --release || (sleep 15 && flutter build apk --release)
+        run: |
+          set -o pipefail
+          flutter build apk --release --stacktrace 2>&1 | tee build.log
+      - name: Ringkas error
+        if: failure()
+        run: grep -iE "what went wrong|error:|failed|caused by|exception|requires|not found" build.log | tail -40
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: oyen-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          path: |
+            build/app/outputs/flutter-apk/app-release.apk
+            build.log
