@@ -48,7 +48,9 @@ class _TomOyenPageState extends State<TomOyenPage> with TickerProviderStateMixin
 
   final _tts = FlutterTts();
   final _speech = SpeechToText();
-  final List> _memori = [];
+  final _memori = [];
+  
+  
 
   String _base = kDefaultBaseUrl;
   String _model = kDefaultModel;
@@ -126,7 +128,8 @@ class _TomOyenPageState extends State<TomOyenPage> with TickerProviderStateMixin
     });
 
     try {
-      final List> hist = [
+      final hist = [
+        
         {'role': 'system', 'content': oyenSystemPrompt(_wajibLevel)},
       ];
       final mulai = _memori.length > 6 ? _memori.length - 6 : 0;
