@@ -255,19 +255,6 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
   }
 
   Widget _kucing({double size = 46}) {
-    final double iconSize = size * 0.55;
-    final Widget fallbackWidget = Center(
-      child: Icon(
-        Icons.pets_rounded,
-        size: iconSize,
-        color: _oren,
-      ),
-    );
-    final Widget avatarImg = Image.asset(
-      'assets/oyen.png',
-      fit: BoxFit.cover,
-      errorBuilder: (ctx, err, stack) => fallbackWidget,
-    );
     return AnimatedBuilder(
       animation: _bob,
       builder: (context, child) {
@@ -276,16 +263,7 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
           offset: Offset(0, -3.5 * t),
           child: Transform.rotate(
             angle: (_typing || _listening ? 0.09 : 0.02) * (t * 2 - 1),
-            child: Container(
-              width: size,
-              height: size,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: const Color(0xFF22222E),
-                border: Border.all(color: _oren.withValues(alpha: 0.7), width: 2),
-              ),
-              child: ClipOval(child: avatarImg),
-            ),
+            child: _AvatarOyen(size: size),
           ),
         );
       },
@@ -516,6 +494,44 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _AvatarOyen extends StatelessWidget {
+  final double size;
+  const _AvatarOyen({required this.size});
+
+  @override
+  Widget build(BuildContext context) {
+    final double iconSize = size * 0.55;
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: const Color(0xFF22222E),
+        border: Border.all(color: _oren.withValues(alpha: 0.7), width: 2),
+      ),
+      child: ClipOval(
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Center(
+              child: Icon(
+                Icons.pets_rounded,
+                size: iconSize,
+                color: _oren,
+              ),
+            ),
+            Image.asset(
+              'assets/oyen.png',
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
+            ),
+          ],
+        ),
       ),
     );
   }
