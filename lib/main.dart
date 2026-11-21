@@ -255,9 +255,10 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
   }
 
   Widget _kucing({double size = 46}) {
+    final double emojiSize = size * 0.6;
     return AnimatedBuilder(
       animation: _bob,
-      builder: (_, __) {
+      builder: (context, child) {
         final t = _bob.value;
         return Transform.translate(
           offset: Offset(0, -3.5 * t),
@@ -274,12 +275,14 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
                 child: Image.asset(
                   'assets/oyen.png',
                   fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => Center(
-                    child: Text(
-                      '🐈',
-                      style: TextStyle(fontSize: size * 0.6),
-                    ),
-                  ),
+                  errorBuilder: (ctx, err, stack) {
+                    return Center(
+                      child: Text(
+                        '🐈',
+                        style: TextStyle(fontSize: emojiSize),
+                      ),
+                    );
+                  },
                 ),
               ),
             ),
