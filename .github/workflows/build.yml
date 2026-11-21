@@ -46,13 +46,15 @@ jobs:
           manifest = manifest.replace('android:label="oyen"', 'android:label="Oyen"')
           manifest_path.write_text(manifest, encoding="utf-8")
 
-          # 2. build.gradle.kts (compileSdk, minSdk, targetSdk)
+          # 2. build.gradle.kts (compileSdk = 36, targetSdk = 36)
           gradle_app = Path("android/app/build.gradle.kts")
           if gradle_app.exists():
               txt = gradle_app.read_text(encoding="utf-8")
-              txt = txt.replace("compileSdk = flutter.compileSdkVersion", "compileSdk = 35")
+              txt = txt.replace("compileSdk = flutter.compileSdkVersion", "compileSdk = 36")
+              txt = txt.replace("compileSdk = 35", "compileSdk = 36")
               txt = txt.replace("minSdk = flutter.minSdkVersion", "minSdk = 24")
-              txt = txt.replace("targetSdk = flutter.targetSdkVersion", "targetSdk = 35")
+              txt = txt.replace("targetSdk = flutter.targetSdkVersion", "targetSdk = 36")
+              txt = txt.replace("targetSdk = 35", "targetSdk = 36")
               gradle_app.write_text(txt, encoding="utf-8")
 
           # 3. gradle.properties
