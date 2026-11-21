@@ -11,6 +11,7 @@ void main() => runApp(const OyenApp());
 
 class OyenApp extends StatelessWidget {
   const OyenApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -39,6 +40,7 @@ class Msg {
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
+
   @override
   State<ChatPage> createState() => _ChatPageState();
 }
@@ -51,14 +53,22 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
   final _speech = SpeechToText();
   final List<Msg> _msgs = [];
 
-  String _key = '', _base = kDefaultBaseUrl, _model = kDefaultModel, _level = 'pedas';
-  bool _ttsOn = true, _typing = false, _siap = false, _listening = false;
+  String _key = '';
+  String _base = kDefaultBaseUrl;
+  String _model = kDefaultModel;
+  String _level = 'pedas';
+  bool _ttsOn = true;
+  bool _typing = false;
+  bool _siap = false;
+  bool _listening = false;
 
   @override
   void initState() {
     super.initState();
-    _bob = AnimationController(vsync: this, duration: const Duration(milliseconds: 850))
-      ..repeat(reverse: true);
+    _bob = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 850),
+    )..repeat(reverse: true);
     _tts.setLanguage('id-ID');
     _tts.setPitch(1.15);
     _tts.setSpeechRate(0.5);
@@ -75,7 +85,9 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
       _ttsOn = p.getBool('tts') ?? true;
       _siap = true;
     });
-    if (_key.isEmpty) _bukaSetting();
+    if (_key.isEmpty) {
+      _bukaSetting();
+    }
   }
 
   @override
@@ -91,7 +103,10 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
   void _snack(String t) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(t), backgroundColor: const Color(0xFF3A1C1C)),
+      SnackBar(
+        content: Text(t),
+        backgroundColor: const Color(0xFF3A1C1C),
+      ),
     );
   }
 
@@ -109,7 +124,10 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
   Future<void> _kirim() async {
     final t = _ctrl.text.trim();
     if (t.isEmpty || _typing) return;
-    if (_key.isEmpty) return _bukaSetting();
+    if (_key.isEmpty) {
+      _bukaSetting();
+      return;
+    }
     setState(() {
       _msgs.add(Msg('user', t));
       _ctrl.clear();
@@ -118,7 +136,7 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
     _bawah();
     try {
       final hist = >[
-        {'role': 'system', 'content': oyenSystemPrompt(_level)}
+        {'role': 'system', 'content': oyenSystemPrompt(_level)},
       ];
       final potong = _msgs.length > 13 ? _msgs.sublist(_msgs.length - 13) : _msgs;
       for (final m in potong) {
@@ -127,12 +145,16 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
       final r = await OyenApi(key: _key, baseUrl: _base, model: _model).reply(hist);
       if (!mounted) return;
       setState(() => _msgs.add(Msg('assistant', r)));
-      if (_ttsOn) _bicara(r);
+      if (_ttsOn) {
+        await _bicara(r);
+      }
     } catch (e) {
       if (!mounted) return;
       setState(() => _msgs.add(Msg('error', '$e')));
     } finally {
-      if (mounted) setState(() => _typing = false);
+      if (mounted) {
+        setState(() => _typing = false);
+      }
       _bawah();
     }
   }
@@ -146,7 +168,9 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
   Future<void> _dengar() async {
     if (_listening) {
       await _speech.stop();
-      if (mounted) setState(() => _listening = false);
+      if (mounted) {
+        setState(() => _listening = false);
+      }
       return;
     }
     bool ok = false;
@@ -158,13 +182,18 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
           }
         },
         onError: (_) {
-          if (mounted) setState(() => _listening = false);
+          if (mounted) {
+            setState(() => _listening = false);
+          }
         },
       );
     } catch (_) {
       ok = false;
     }
-    if (!ok) return _snack('Mic gak bisa dipakai. Cek izin mikrofon di HP.');
+    if (!ok) {
+      _snack('Mic gak bisa dipakai. Cek izin mikrofon di HP.');
+      return;
+    }
     if (!mounted) return;
     setState(() {
       _listening = true;
@@ -182,7 +211,7 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
       localeId: 'id_ID',
       listenFor: const Duration(seconds: 30),
       pauseFor: const Duration(seconds: 3),
-      listenOptions: const SpeechListenOptions(
+      listenOptions: SpeechListenOptions(
         partialResults: true,
         cancelOnError: true,
         listenMode: ListenMode.dictation,
@@ -239,14 +268,17 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
               height: size,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: _oren.withValues(alpha: .7), width: 2),
+                border: Border.all(color: _oren.withValues(alpha: 0.7), width: 2),
               ),
               child: ClipOval(
                 child: Image.asset(
                   'assets/oyen.png',
                   fit: BoxFit.cover,
                   errorBuilder: (_, __, ___) => Center(
-                    child: Text('🐈', style: TextStyle(fontSize: size * .6)),
+                    child: Text(
+                      '🐈',
+                      style: TextStyle(fontSize: size * 0.6),
+                    ),
                   ),
                 ),
               ),
@@ -265,7 +297,7 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 12),
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 11),
-        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * .78),
+        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.78),
         decoration: BoxDecoration(
           gradient: user
               ? const LinearGradient(colors: [Color(0xFFFF9A45), Color(0xFFE86A00)])
@@ -308,16 +340,15 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
           builder: (_, __) => Row(
             mainAxisSize: MainAxisSize.min,
             children: List.generate(3, (i) {
-              final f = (_bob.value + i * .33) % 1;
+              final f = (_bob.value + i * 0.33) % 1;
+              final pulse = f < 0.5 ? f * 2 : (1 - f) * 2;
               return Container(
                 margin: const EdgeInsets.symmetric(horizontal: 2.5),
                 width: 7,
                 height: 7,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: _oren.withValues(
-                    alpha: .35 + .65 * (f < .5 ? f * 2 : (1 - f) * 2),
-                  ),
+                  color: _oren.withValues(alpha: 0.35 + 0.65 * pulse),
                 ),
               );
             }),
@@ -330,7 +361,9 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
   @override
   Widget build(BuildContext context) {
     if (!_siap) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator(color: _oren)));
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator(color: _oren)),
+      );
     }
     return Scaffold(
       body: Column(
@@ -363,12 +396,14 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
                           fontSize: 19,
                           fontWeight: FontWeight.w800,
                           color: Color(0xFFFFD3A8),
-                          letterSpacing: .3,
+                          letterSpacing: 0.3,
                         ),
                       ),
                       Text(
-                        _listening ? 'dengerin...' : (_typing ? 'lagi ngeliatin lu...' : 'kucing oren • $_level'),
-                        style: TextStyle(fontSize: 12, color: _oren.withValues(alpha: .85)),
+                        _listening
+                            ? 'dengerin...'
+                            : (_typing ? 'lagi ngeliatin lu...' : 'kucing oren • $_level'),
+                        style: TextStyle(fontSize: 12, color: _oren.withValues(alpha: 0.85)),
                       ),
                     ],
                   ),
@@ -484,10 +519,14 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
 }
 
 class _SettingSheet extends StatefulWidget {
-  final String awalKey, awalBase, awalModel, awalLevel;
+  final String awalKey;
+  final String awalBase;
+  final String awalModel;
+  final String awalLevel;
   final bool awalTts;
   final void Function(String, String, String, String, bool) onSimpan;
   final VoidCallback onHapus;
+
   const _SettingSheet({
     required this.awalKey,
     required this.awalBase,
@@ -497,6 +536,7 @@ class _SettingSheet extends StatefulWidget {
     required this.onSimpan,
     required this.onHapus,
   });
+
   @override
   State<_SettingSheet> createState() => _SettingSheetState();
 }
@@ -565,7 +605,10 @@ class _SettingSheetState extends State<_SettingSheet> {
             _field('Base URL', _b, hint: kDefaultBaseUrl),
             _field('Model', _m, hint: kDefaultModel),
             const SizedBox(height: 4),
-            const Text('Level Ketoksikan', style: TextStyle(fontSize: 13, color: Color(0xFF9C9CAC))),
+            const Text(
+              'Level Ketoksikan',
+              style: TextStyle(fontSize: 13, color: Color(0xFF9C9CAC)),
+            ),
             const SizedBox(height: 8),
             SegmentedButton<String>(
               segments: const [
@@ -585,10 +628,36 @@ class _SettingSheetState extends State<_SettingSheet> {
               contentPadding: EdgeInsets.zero,
               title: const Text('Suara Oyen', style: TextStyle(fontSize: 14)),
               value: _tts,
-              activeColor: _oren,
+              activeThumbColor: _oren,
+              activeTrackColor: _oren.withValues(alpha: 0.4),
               onChanged: (v) => setState(() => _tts = v),
             ),
             const SizedBox(height: 6),
             FilledButton(
               onPressed: () {
-                widget.onSimpan(_k.text.trim(), _b.text.trim(),
+                widget.onSimpan(_k.text.trim(), _b.text.trim(), _m.text.trim(), _lv, _tts);
+                Navigator.pop(context);
+              },
+              style: FilledButton.styleFrom(
+                backgroundColor: _oren,
+                foregroundColor: Colors.black,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+              ),
+              child: const Text('Simpan', style: TextStyle(fontWeight: FontWeight.w800)),
+            ),
+            TextButton(
+              onPressed: () {
+                widget.onHapus();
+                Navigator.pop(context);
+              },
+              child: const Text(
+                'Hapus semua chat',
+                style: TextStyle(color: Color(0xFFFF9C9C)),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
