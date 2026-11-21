@@ -255,7 +255,7 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
   }
 
   Widget _kucing({double size = 46}) {
-    final double emojiSize = size * 0.6;
+    final double iconSize = size * 0.55;
     return AnimatedBuilder(
       animation: _bob,
       builder: (context, child) {
@@ -269,6 +269,7 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
               height: size,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
+                color: const Color(0xFF22222E),
                 border: Border.all(color: _oren.withValues(alpha: 0.7), width: 2),
               ),
               child: ClipOval(
@@ -277,9 +278,10 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
                   fit: BoxFit.cover,
                   errorBuilder: (ctx, err, stack) {
                     return Center(
-                      child: Text(
-                        '🐈',
-                        style: TextStyle(fontSize: emojiSize),
+                      child: Icon(
+                        Icons.pets_rounded,
+                        size: iconSize,
+                        color: _oren,
                       ),
                     );
                   },
