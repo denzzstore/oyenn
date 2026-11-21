@@ -13,18 +13,11 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - uses: subosito/flutter-action@v2
+      - uses: gradle/actions/setup-gradle@v3
         with:
-          channel: stable
-          cache: true
-      - name: Scaffold android + izin
-        run: |
-          flutter create --platforms=android --project-name oyen --org ai.venice .
-          sed -i 's|<application|    <uses-permission android:name="android.permission.INTERNET"/>\n    <uses-permission android:name="android.permission.RECORD_AUDIO"/>\n    <queries>\n        <intent><action android:name="android.speech.RecognitionService"/></intent>\n        <intent><action android:name="android.intent.action.TTS_SERVICE"/></intent>\n    </queries>\n    <application|' android/app/src/main/AndroidManifest.xml
-          sed -i 's|android:label="oyen"|android:label="Oyen"|' android/app/src/main/AndroidManifest.xml
-      - run: flutter pub get
-      - run: flutter build apk --release
+          gradle-version: '8.7'
+      - run: gradle assembleDebug --no-daemon
       - uses: actions/upload-artifact@v4
         with:
           name: oyen-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          path: app/build/outputs/apk/debug/app-debug.apk
